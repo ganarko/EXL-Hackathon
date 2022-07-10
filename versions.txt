@@ -1,0 +1,4 @@
+Ubuntu 20.04LTS
+Docker client:20.10.14
+Docker server: 20.10.14
+Docker Compose version v2.3.3

@@ -1,0 +1,6 @@
+Django==4.0.5
+fpdf==1.7.2
+minio==7.1.9
+pymongo==3.12.3
+psycopg2==2.9.3
+boto3==1.24.22
