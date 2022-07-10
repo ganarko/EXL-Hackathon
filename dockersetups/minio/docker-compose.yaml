@@ -1,0 +1,33 @@
+version: '3'
+services:
+  minio-gcp:
+    image: minio/minio:latest
+    container_name: minio-gcp
+    # restart: always
+    ports:
+      - '9010:9000'
+      - '9011:9001'
+    environment:
+      - MINIO_ACCESS_KEY=12345678
+      - MINIO_SECRET_KEY=password
+      - CONSOLE_ACCESS_KEY=test
+      - CONSOLE_SECRET_KEY=test
+    command: server --address ":9000" --console-address ":9001" /data
+    volumes:
+      - ./minio_data_gcp:/data
+  
+  minio-aws:
+    image: minio/minio:latest
+    container_name: minio-aws
+    # restart: always
+    ports:
+      - '9020:9000'
+      - '9021:9001'
+    environment:
+      - MINIO_ACCESS_KEY=12345678
+      - MINIO_SECRET_KEY=password
+      - CONSOLE_ACCESS_KEY=test
+      - CONSOLE_SECRET_KEY=test
+    command: server --address ":9000" --console-address ":9001" /data
+    volumes:
+      - ./minio_data_aws:/data

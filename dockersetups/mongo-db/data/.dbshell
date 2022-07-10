@@ -1,0 +1,6 @@
+db.runCommand("ping").ok
+db.runCommand("ping").ok
+db.runCommand("ping").ok
+db.runCommand("ping").ok
+db.runCommand("ping").ok
+db.runCommand("ping").ok
