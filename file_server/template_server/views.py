@@ -1,20 +1,27 @@
+import json
+import base64
+import uuid
 from urllib import response
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from pymongo import MongoClient
 from django.http import HttpResponse
-import json
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
-template_collection = db['template_server_template']
-report_collection = db['report_saver_file']
+template_collection = db['templates']
+report_collection = db['reports']
+users_collection = db['users']
 
 @csrf_exempt
 def template(request):
+    user_status = check_user_validity(request)
+    if user_status != "user":
+        return HttpResponse("Unauthorized request")
+    
     if request.method == "GET":
         return fetch_template(request)
     elif request.method == "PUT":
@@ -115,7 +122,6 @@ def modify_template(request_in):
 
     print(result)
     return HttpResponse(status=200, content="Object modified")
-    
 
 def delete_template(request_in):
     print("Get request")
@@ -145,3 +151,30 @@ def check_report_template_dependency(company_name, template_name):
     else:
         #print(template_coupled, type(template_coupled), "NOt None")
         return "There's alredy a report using this template, unless versioning templates is implemented modification not allowed"
+
+def check_user_validity(request_in):
+    auth_header = request_in.META['HTTP_AUTHORIZATION']
+    encoded_credentials = auth_header.split(' ')[1]  # Removes "Basic " to isolate credentials
+    decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8").split(':')
+    username = decoded_credentials[0]
+    password = decoded_credentials[1]
+    user_data = get_user_token(username)
+    
+    token_str = user_data["token"]
+    if token_str != password:
+        return "none"
+    elif token_str == password and user_data["guest_mode"]=="enabled":
+        return "guest"
+    else:
+        return "user"
+
+def get_user_token(user_id):
+    
+    primary_key = user_id
+
+    try:
+        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1})
+    except Exception:
+        return HttpResponse("Not Able to fetch template object")
+    
+    return user_details

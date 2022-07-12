@@ -1,3 +1,11 @@
+import json
+import binascii
+import collections
+import datetime
+import hashlib
+import six
+import base64
+
 from datetime import timedelta
 from django.http import HttpResponse, JsonResponse
 from pymongo import MongoClient
@@ -6,14 +14,16 @@ from django.views.decorators.csrf import csrf_exempt
 from fpdf import FPDF
 from minio import Minio
 from minio.error import S3Error
-import json
+from google.oauth2 import service_account
+from six.moves.urllib.parse import quote
 
 management_id = "exl"
 mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
-report_collection = db['report_saver_file']
-template_collection = db['template_server_template']
+template_collection = db['templates']
+report_collection = db['reports']
+users_collection = db['users']
 
 #Object stores mimicking gcs and s3
 client_aws = Minio(
@@ -32,19 +42,28 @@ client_gcp = Minio(
 
 @csrf_exempt
 def report(request):
+    
+    user_status = check_user_validity(request)
+    
+    if user_status == "none":
+        return HttpResponse("Unauthorized request | no user found")
+    
     report_json = json.loads(request.body.decode('utf-8'))
     company_name = report_json.get("company_name")
     report_name = report_json.get("report_name")
 
-    if request.method == "GET":
+    if request.method == "GET" :
         download_links = report_json.get("download_links")
         report = get_report_data(report_name, company_name, download_links)
         return JsonResponse(report, safe=False)
-    elif request.method  == "DELETE":
+    elif request.method  == "DELETE" and user_status!="guest":
         removed_report_status = delete_report(report_name,company_name)
         return HttpResponse(removed_report_status)
-    elif request.method  == "PUT":
+    elif request.method  == "PUT" and user_status!="guest":
         return HttpResponse("Report Storage pattern modification is not allowed as of now")
+    
+    if user_status=="guest":
+        return HttpResponse("Guest can VIEW Reports | Only guest Access")
     
     content = report_json.get("content")
     print(company_name,report_name) 
@@ -73,6 +92,36 @@ def report(request):
     save_report_object(compressed_report_name, template_data, storage_bucket_object_ids)
 
     return JsonResponse(storage_bucket_object_ids, safe=False)
+
+def check_user_validity(request_in):
+    try: 
+        auth_header = request_in.META['HTTP_AUTHORIZATION']
+    except Exception as e:
+        print(e)
+        return HttpResponse("Bad request | No Creds")
+    
+    encoded_credentials = auth_header.split(' ')[1]  # Removes "Basic " to isolate credentials
+    decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8").split(':')
+    username = decoded_credentials[0]
+    password = decoded_credentials[1]
+    user_data = get_user_token(username)
+    
+    if str(user_data["token"]) != password:
+        return "none"
+    elif str(user_data["token"]) == password and user_data["guest_mode"]=="enabled":
+        return "guest"
+    else:
+        return "user"
+
+def get_user_token(user_id):
+    primary_key = user_id
+
+    try:
+        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1})
+    except Exception:
+        return HttpResponse("Not Able to fetch template object")
+    
+    return user_details
 
 def get_object_download_link(report_details):
     object_download_links = []
@@ -317,3 +366,150 @@ def decrypt_file_object(file_path, key):
 # When local compression is being used  | Not Implemented YET
 def decompress_file_object(file_path, compression_algo):
     return 0
+
+
+# <---------------------- GCP GCS Storage Functions ---------------------->
+
+def upload_blob(bucket_name, source_file_name, destination_blob_name):
+    """Uploads a file to the bucket."""
+    # The ID of your GCS bucket
+    # bucket_name = "your-bucket-name"
+    # The path to your file to upload
+    # source_file_name = "local/path/to/file"
+    # The ID of your GCS object
+    # destination_blob_name = "storage-object-name"
+
+    storage_client = storage.Client()
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(destination_blob_name)
+
+    blob.upload_from_filename(source_file_name)
+
+    print(
+        f"File {source_file_name} uploaded to {destination_blob_name}."
+    )
+def download_blob(bucket_name, source_blob_name, destination_file_name):
+    """Downloads a blob from the bucket."""
+    # The ID of your GCS bucket
+    # bucket_name = "your-bucket-name"
+
+    # The ID of your GCS object
+    # source_blob_name = "storage-object-name"
+
+    # The path to which the file should be downloaded
+    # destination_file_name = "local/path/to/file"
+
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+
+    # Construct a client side representation of a blob.
+    # Note `Bucket.blob` differs from `Bucket.get_blob` as it doesn't retrieve
+    # any content from Google Cloud Storage. As we don't need additional data,
+    # using `Bucket.blob` is preferred here.
+    blob = bucket.blob(source_blob_name)
+    blob.download_to_filename(destination_file_name)
+
+    print(
+        "Downloaded storage object {} from bucket {} to local file {}.".format(
+            source_blob_name, bucket_name, destination_file_name
+        )
+    )
+def delete_blob(bucket_name, source_blob_name):
+    """Deletes a blob from the bucket."""
+    # bucket_name = "your-bucket-name"
+    # blob_name = "your-object-name"
+
+    storage_client = storage.Client()
+
+    bucket = storage_client.bucket(bucket_name)
+    blob = bucket.blob(source_blob_name)
+    blob.delete()
+
+    print(f"Blob {source_blob_name} deleted.")
+def generate_signed_url(service_account_file, bucket_name, object_name,
+                        expiration, subresource=None, http_method='GET',
+                        query_parameters=None, headers=None):
+
+    if expiration > 604800:
+        print('Expiration Time can\'t be longer than 604800 seconds (7 days).')
+        return None
+
+    escaped_object_name = quote(six.ensure_binary(object_name), safe=b'/~')
+    canonical_uri = '/{}'.format(escaped_object_name)
+
+    datetime_now = datetime.datetime.now(tz=datetime.timezone.utc)
+    request_timestamp = datetime_now.strftime('%Y%m%dT%H%M%SZ')
+    datestamp = datetime_now.strftime('%Y%m%d')
+
+    google_credentials = service_account.Credentials.from_service_account_file(
+        service_account_file)
+    client_email = google_credentials.service_account_email
+    credential_scope = '{}/auto/storage/goog4_request'.format(datestamp)
+    credential = '{}/{}'.format(client_email, credential_scope)
+
+    if headers is None:
+        headers = dict()
+    host = '{}.storage.googleapis.com'.format(bucket_name)
+    headers['host'] = host
+
+    canonical_headers = ''
+    ordered_headers = collections.OrderedDict(sorted(headers.items()))
+    for k, v in ordered_headers.items():
+        lower_k = str(k).lower()
+        strip_v = str(v).lower()
+        canonical_headers += '{}:{}\n'.format(lower_k, strip_v)
+
+    signed_headers = ''
+    for k, _ in ordered_headers.items():
+        lower_k = str(k).lower()
+        signed_headers += '{};'.format(lower_k)
+    signed_headers = signed_headers[:-1]  # remove trailing ';'
+
+    if query_parameters is None:
+        query_parameters = dict()
+    query_parameters['X-Goog-Algorithm'] = 'GOOG4-RSA-SHA256'
+    query_parameters['X-Goog-Credential'] = credential
+    query_parameters['X-Goog-Date'] = request_timestamp
+    query_parameters['X-Goog-Expires'] = expiration
+    query_parameters['X-Goog-SignedHeaders'] = signed_headers
+    if subresource:
+        query_parameters[subresource] = ''
+
+    canonical_query_string = ''
+    ordered_query_parameters = collections.OrderedDict(
+        sorted(query_parameters.items()))
+    for k, v in ordered_query_parameters.items():
+        encoded_k = quote(str(k), safe='')
+        encoded_v = quote(str(v), safe='')
+        canonical_query_string += '{}={}&'.format(encoded_k, encoded_v)
+    canonical_query_string = canonical_query_string[:-1]  # remove trailing '&'
+
+    canonical_request = '\n'.join([http_method,
+                                   canonical_uri,
+                                   canonical_query_string,
+                                   canonical_headers,
+                                   signed_headers,
+                                   'UNSIGNED-PAYLOAD'])
+
+    canonical_request_hash = hashlib.sha256(
+        canonical_request.encode()).hexdigest()
+
+    string_to_sign = '\n'.join(['GOOG4-RSA-SHA256',
+                                request_timestamp,
+                                credential_scope,
+                                canonical_request_hash])
+
+    # signer.sign() signs using RSA-SHA256 with PKCS1v15 padding
+    signature = binascii.hexlify(
+        google_credentials.signer.sign(string_to_sign)
+    ).decode()
+
+    scheme_and_host = '{}://{}'.format('https', host)
+    signed_url = '{}{}?{}&x-goog-signature={}'.format(
+        scheme_and_host, canonical_uri, canonical_query_string, signature)
+
+    print(signed_url)
+    return signed_url
+
+# <---------------------- AWS S3 Storage Functions ---------------------->
