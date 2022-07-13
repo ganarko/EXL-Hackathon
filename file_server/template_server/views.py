@@ -20,6 +20,7 @@ users_collection = db['users']
 def template(request):
     user_status = check_user_validity(request)
     if user_status != "user":
+        print(user_status)
         return HttpResponse("Unauthorized request")
     
     if request.method == "GET":
@@ -157,13 +158,15 @@ def check_user_validity(request_in):
     encoded_credentials = auth_header.split(' ')[1]  # Removes "Basic " to isolate credentials
     decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8").split(':')
     username = decoded_credentials[0]
-    password = decoded_credentials[1]
+    password = str(decoded_credentials[1])
     user_data = get_user_token(username)
     
-    token_str = user_data["token"]
+    token_str = str(user_data["token"])
+    print(token_str, password)
     if token_str != password:
         return "none"
     elif token_str == password and user_data["guest_mode"]=="enabled":
+        print("Guest Request to Template Server")
         return "guest"
     else:
         return "user"

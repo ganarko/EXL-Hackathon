@@ -1,23 +1,37 @@
+#For intermediary Computation
 import json
+import os
 import binascii
 import collections
 import datetime
 import hashlib
 import six
 import base64
-
-from datetime import timedelta
-from django.http import HttpResponse, JsonResponse
-from pymongo import MongoClient
-from django.http import HttpResponse
-from django.views.decorators.csrf import csrf_exempt
 from fpdf import FPDF
+from datetime import timedelta
+
+#For Mongo DB
+from pymongo import MongoClient
+
+#For MinIo  to Demonstrate multi cloud - Multi Region Multi Storage-Class Functionality
 from minio import Minio
 from minio.error import S3Error
+
+#For AWS S3-Ops
+import boto3
+from botocore.client import Config
+
+#For GCP GCS-Ops
 from google.oauth2 import service_account
 from six.moves.urllib.parse import quote
+from google.cloud import storage
 
-management_id = "exl"
+#For Django 
+from django.http import HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+
+
+#MongoDB Config
 mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
@@ -25,14 +39,20 @@ template_collection = db['templates']
 report_collection = db['reports']
 users_collection = db['users']
 
+#Cloud Buckets
+GCS_BUCKET = "exl-file-storage"
+GCS_CREDENTIALS_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+AWS_BUCKET = "aws-use2-standard-exl"
+
 #Object stores mimicking gcs and s3
-client_aws = Minio(
+management_id = "exl"
+client_azure = Minio(
         "localhost:9020",
         access_key="12345678",
         secret_key="password",
         secure=False,
 )
-client_gcp = Minio(
+client_oci = Minio(
         "localhost:9010",
         access_key="12345678",
         secret_key="password",
@@ -52,19 +72,23 @@ def report(request):
     company_name = report_json.get("company_name")
     report_name = report_json.get("report_name")
 
+    #Allowed guests and users
     if request.method == "GET" :
         download_links = report_json.get("download_links")
-        report = get_report_data(report_name, company_name, download_links)
+        report = get_report_data(report_name, company_name, download_links, report_json)
         return JsonResponse(report, safe=False)
-    elif request.method  == "DELETE" and user_status!="guest":
-        removed_report_status = delete_report(report_name,company_name)
+    #Allowed users Only
+    elif request.method  == "DELETE" and user_status=="user":
+        removed_report_status = delete_report(report_name, company_name, report_json)
         return HttpResponse(removed_report_status)
-    elif request.method  == "PUT" and user_status!="guest":
+    #Allowed users Only
+    elif request.method  == "PUT" and user_status=="user":
         return HttpResponse("Report Storage pattern modification is not allowed as of now")
     
     if user_status=="guest":
-        return HttpResponse("Guest can VIEW Reports | Only guest Access")
+        return HttpResponse("Guest Users can only VIEW Reports | Only guest Access")
     
+    #Allowed users Only create report from text content sample
     content = report_json.get("content")
     print(company_name,report_name) 
 
@@ -109,6 +133,8 @@ def check_user_validity(request_in):
     if str(user_data["token"]) != password:
         return "none"
     elif str(user_data["token"]) == password and user_data["guest_mode"]=="enabled":
+        #verify time for the guest
+        #verify template - report relationship for the guest
         return "guest"
     else:
         return "user"
@@ -117,13 +143,13 @@ def get_user_token(user_id):
     primary_key = user_id
 
     try:
-        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1})
+        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1, "end_time":1})
     except Exception:
         return HttpResponse("Not Able to fetch template object")
     
     return user_details
 
-def get_object_download_link(report_details):
+def get_object_download_link(report_details, time_limit):
     object_download_links = []
     if report_details is None:
         return None
@@ -137,20 +163,28 @@ def get_object_download_link(report_details):
         bucket_name = a.split('_')[0]
         object_id = a
 
-        if cloud_provider == "aws":
-            cloud_provider_client = client_aws
-        elif cloud_provider == "gcp":
-            cloud_provider_client = client_gcp
+        if cloud_provider == "oci":
+            cloud_provider_client = client_oci
+            object_link = get_object(cloud_provider_client, bucket_name, object_id, time_limit)
+        elif cloud_provider == "azure":
+            cloud_provider_client = client_azure
+            object_link = get_object(cloud_provider_client, bucket_name, object_id, time_limit)
+        elif bucket_name == "gcs":
+          expiration = 60*60*time_limit
+          object_link = generate_signed_url_gcp(GCS_CREDENTIALS_FILE, GCS_BUCKET, object_id, expiration)
+        elif bucket_name == "s3":
+          expiration = 60*60*time_limit
+          object_link = get_presigned_url_aws(AWS_BUCKET, object_id, expiration)
         else:
-            print("Unable to Read Client, object not removed")
-            return "Not Able to delete report Object"
-        object_link = get_object(cloud_provider_client, bucket_name, object_id)
+            print("Unable to Read Client, object url not fetched")
+            return "Not Able to get report Object"
+        
         object_download_links.append(object_link)
 
     objcet_details =  object_download_links
     return objcet_details
 
-def get_report_data(filename,company_name, download_links):
+def get_report_data(filename, company_name, download_links, report_json):
     print("Getting Report Metadata")
     try:
         report_details = report_collection.find_one({"company_name": company_name ,"name": filename}, {"_id": 0, "company_name": 0 } )
@@ -163,43 +197,54 @@ def get_report_data(filename,company_name, download_links):
     if report_details is None:
         return None
     if download_links == "enabled":
-        report_details["object_download_links"] = get_object_download_link(report_details)
+        time_limit = report_json.get("time_limit")
+        report_details["object_download_links"] = get_object_download_link(report_details, time_limit)
     
     print(report_details["name"])
     return report_details
 
-def delete_report(reportname,company_name):
-    report_details = get_report_data(reportname, company_name, download_links="disabled")
+def delete_report(reportname,company_name, report_json_data):
+    report_details = get_report_data(reportname, company_name, download_links="disabled", report_json=report_json_data)
     if report_details is None:
         return HttpResponse("No such Report Exists")
-    storage_ponits = report_details['storage_object_ids']
-
-    for a in storage_ponits:
+    storage_object_ids = report_details['storage_object_ids']
+    delete_report_status = f"{reportname} is Deleted successfully in: "
+    for a in storage_object_ids:
         #Func to delete Object
         cloud_provider = a.split('-')[0]
         cloud_provider_client =  ""
         bucket_name = a.split('_')[0]
         object_id = a
 
-        if cloud_provider == "aws":
-            cloud_provider_client = client_aws
-        elif cloud_provider == "gcp":
-            cloud_provider_client = client_gcp
+        if cloud_provider == "oci":
+            cloud_provider_client = client_oci
+            delete_object(cloud_provider_client, bucket_name, object_id)
+            delete_report_status = delete_report_status + bucket_name + ", "
+        elif cloud_provider == "azure":
+            cloud_provider_client = client_azure
+            delete_object(cloud_provider_client, bucket_name, object_id)
+            delete_report_status = delete_report_status + bucket_name + ", "
+        elif bucket_name == "gcs":
+            delete_blob_gcp(GCS_BUCKET, object_id)
+            delete_report_status = delete_report_status + bucket_name + ", "
+        elif bucket_name == "s3":
+            delete_object_aws(AWS_BUCKET, object_id)
+            delete_report_status = delete_report_status + bucket_name + ", "
         else:
             print("Unable to Read Client, object not removed")
             return "Not Able to delete report Object"
         
-        delete_object(cloud_provider_client, bucket_name, object_id)
-        print(f"Report Document removed from: {a}")
+        
+        print(f"Report Document removed from: {bucket_name}")
     
     try:
-        report_delete_status = report_collection.delete_one({"name": reportname, "company_name": company_name})
+        report_object_delete_status = report_collection.delete_one({"name": reportname, "company_name": company_name})
         print("Report footprint in mongoDb removed")
     except Exception as e:
         print(e)
         return "Not Able to delete report Object in MongoDB"
     #Deleted  Report
-    return f"{reportname} is Deleted successfully"
+    return delete_report_status
 
 def generate_temp_report(report_name, content):
     pdf = FPDF()
@@ -294,20 +339,32 @@ def save_report_cloud(template_data, report_name, company):
     return object_ids
 
 def upload_file_cloud(storage_id_string, reportname, company):
-    storage_details = storage_id_string.split('-')
-    cloud_service_provider = storage_details[0]
-    provider_region = storage_details[1]
-    storage_type = storage_details[2]
+    
+
+    if storage_id_string != "gcs" and storage_id_string != "s3":
+        storage_details = storage_id_string.split('-')
+        cloud_service_provider = storage_details[0]
+        provider_region = storage_details[1]
+        storage_type = storage_details[2]
+        bucket_name = cloud_service_provider + "-" + provider_region + "-" + storage_type + "-" + management_id
+
+    else:
+        cloud_service_provider = storage_id_string
 
     file_address = f"temp-reports/{reportname}"
-    bucket_name = cloud_service_provider + "-" + provider_region + "-" + storage_type + "-" + management_id
-
+    
     saved_object_id = ""
 
-    if(cloud_service_provider == "gcp"):
-        saved_object_id = put_object(client_gcp,bucket_name, file_address, company, reportname)
-    elif(cloud_service_provider == "aws"):
-        saved_object_id = put_object(client_aws,bucket_name, file_address, company, reportname)
+    if(cloud_service_provider == "oci"):
+        saved_object_id = put_object(client_oci, bucket_name, file_address, company, reportname)
+    elif(cloud_service_provider == "azure"):
+        saved_object_id = put_object(client_azure,bucket_name, file_address, company, reportname)
+    elif(cloud_service_provider == "gcs"):
+        object_id =  cloud_service_provider + "_" + company + "_" + reportname
+        saved_object_id =  upload_blob_gcp(GCS_BUCKET,file_address,object_id )
+    elif(cloud_service_provider == "s3"):
+        object_id =  cloud_service_provider + "_" + company + "_" + reportname
+        saved_object_id = store_object_aws(AWS_BUCKET, file_address, object_id)
     else:
         print("Chosen Cloud provider Does not exist")
         return None
@@ -332,32 +389,20 @@ def put_object(client, bucket, report_address, company, reportname):
         print(e)
         return None
 
-def get_object(client, bucket, object_id):
+def get_object(client, bucket, object_id, time_limit):
     # downloaded_file = "downloaded-"+ reportname
     # object_id =  company + "-" + reportname
     url = client.get_presigned_url(
         "GET",
         bucket,
         object_id,
-        expires=timedelta(hours=24),
+        expires=timedelta(hours=time_limit),
     )
     print(url)
     return url
 
 def delete_object(client, bucket, object_id):
     client.remove_object(bucket, object_id)
-
-
-# Check auth for uploading report | Not Implemented YET
-def check_auth_api_key_upload():
-    #No access for Guests only Token with report generator is valid
-    auth_status =False
-    return auth_status
-
-# Check auth while retrieving reports
-def auth_type_view_report():
-    guest_access = "Verify relevant temporary token"
-    ligit_user = "Find Relavant assigned token"
 
 # When local or client side encryption is being used | Not Implemented YET
 def decrypt_file_object(file_path, key):
@@ -370,7 +415,7 @@ def decompress_file_object(file_path, compression_algo):
 
 # <---------------------- GCP GCS Storage Functions ---------------------->
 
-def upload_blob(bucket_name, source_file_name, destination_blob_name):
+def upload_blob_gcp(bucket_name, source_file_name, destination_blob_name):
     """Uploads a file to the bucket."""
     # The ID of your GCS bucket
     # bucket_name = "your-bucket-name"
@@ -388,7 +433,9 @@ def upload_blob(bucket_name, source_file_name, destination_blob_name):
     print(
         f"File {source_file_name} uploaded to {destination_blob_name}."
     )
-def download_blob(bucket_name, source_blob_name, destination_file_name):
+    return destination_blob_name
+
+def download_blob_gcp(bucket_name, source_blob_name, destination_file_name):
     """Downloads a blob from the bucket."""
     # The ID of your GCS bucket
     # bucket_name = "your-bucket-name"
@@ -415,7 +462,8 @@ def download_blob(bucket_name, source_blob_name, destination_file_name):
             source_blob_name, bucket_name, destination_file_name
         )
     )
-def delete_blob(bucket_name, source_blob_name):
+
+def delete_blob_gcp(bucket_name, source_blob_name):
     """Deletes a blob from the bucket."""
     # bucket_name = "your-bucket-name"
     # blob_name = "your-object-name"
@@ -427,7 +475,8 @@ def delete_blob(bucket_name, source_blob_name):
     blob.delete()
 
     print(f"Blob {source_blob_name} deleted.")
-def generate_signed_url(service_account_file, bucket_name, object_name,
+
+def generate_signed_url_gcp(service_account_file, bucket_name, object_name,
                         expiration, subresource=None, http_method='GET',
                         query_parameters=None, headers=None):
 
@@ -513,3 +562,48 @@ def generate_signed_url(service_account_file, bucket_name, object_name,
     return signed_url
 
 # <---------------------- AWS S3 Storage Functions ---------------------->
+def store_object_aws(bucket, report_address, object_id):
+    s3 = boto3.client("s3")
+    # Dynamically create buckets using createBucket call in boto3 client
+    # found = s3.Bucket('Hello') in s3.buckets.all()
+    s3.upload_file(
+        Filename=report_address,
+        Bucket=bucket,
+        Key=object_id,
+    )
+    return object_id
+
+def view_object_aws(bucket, object_id):
+    s3 = boto3.client("s3")
+    s3.download_file(
+        Bucket=bucket, Key=object_id, Filename=f"downloded-{object_id}",
+    )
+    return "Done"
+
+def get_presigned_url_aws(bucket_name, object_name, expiration):
+    """Generate a presigned URL to share an S3 object
+
+    :param bucket_name: string
+    :param object_name: string
+    :param expiration: Time in seconds for the presigned URL to remain valid
+    :return: Presigned URL as string. If error, returns None.
+    """
+
+    # Generate a presigned URL for the S3 object
+    s3_client = boto3.client('s3',config=Config(signature_version='s3v4', region_name='us-east-2'))
+    try:
+        response_url = s3_client.generate_presigned_url('get_object',
+                                                    Params={'Bucket': bucket_name,
+                                                            'Key': object_name},
+                                                    ExpiresIn=expiration)
+    except Exception as e:
+        print(e)
+        return
+    
+    print(response_url)
+    return response_url
+
+def delete_object_aws(bucket_name, file_name ):
+    s3_client = boto3.client("s3")
+    response = s3_client.delete_object(Bucket=bucket_name, Key=file_name)
+    print(response)

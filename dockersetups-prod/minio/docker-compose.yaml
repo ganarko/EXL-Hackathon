@@ -1,8 +1,8 @@
 version: '3'
 services:
-  minio-gcp:
+  minio-oci:
     image: minio/minio:latest
-    container_name: minio-gcp
+    container_name: minio-oci
     # restart: always
     ports:
       - '9010:9000'
@@ -14,11 +14,11 @@ services:
       - CONSOLE_SECRET_KEY=test
     command: server --address ":9000" --console-address ":9001" /data
     volumes:
-      - ./minio_data_gcp:/data
+      - ./minio_data_oci:/data
   
-  minio-aws:
+  minio-azure:
     image: minio/minio:latest
-    container_name: minio-aws
+    container_name: minio-azure
     # restart: always
     ports:
       - '9020:9000'
@@ -30,4 +30,4 @@ services:
       - CONSOLE_SECRET_KEY=test
     command: server --address ":9000" --console-address ":9001" /data
     volumes:
-      - ./minio_data_aws:/data
+      - ./minio_data_azure:/data
