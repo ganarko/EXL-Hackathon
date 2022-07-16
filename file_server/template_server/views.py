@@ -1,20 +1,29 @@
+import json
+import base64
+import uuid
 from urllib import response
 from django.shortcuts import render
 from django.http import HttpResponse, JsonResponse
 from pymongo import MongoClient
 from django.http import HttpResponse
-import json
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
 mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
-template_collection = db['template_server_template']
-report_collection = db['report_saver_file']
+template_collection = db['templates']
+report_collection = db['reports']
+users_collection = db['users']
 
 @csrf_exempt
 def template(request):
+    
+    user_status = check_user_validity(request)
+    if user_status != "user":
+        print(user_status)
+        return HttpResponse("Unauthorized request | only Verified users can Access Template Server")
+    
     if request.method == "GET":
         return fetch_template(request)
     elif request.method == "PUT":
@@ -49,6 +58,11 @@ def create_template(request_in):
         "file_name_patterns": file_name_patterns
     }
     print(pay_load)
+
+    print(user_data)
+    if primary_key not in user_data['templates']:
+        return HttpResponse("User Trying to Create Unauthorized Template")
+
     try:
         result = template_collection.insert_one(pay_load)
         print("Object inserted")
@@ -67,6 +81,11 @@ def fetch_template(request_in):
     template_json = json.loads(request_in.body.decode('utf-8'))
     template_name = template_json.get("template_name")
     company_name = template_json.get("company_name")
+    primary_key = company_name + "-" + template_name
+
+    if primary_key not in user_data['templates']:
+        return HttpResponse("User Trying to view Unauthorized Template")
+
     try:
         template_details = template_collection.find_one({"template_name": template_name, "company_name": company_name}, {"_id": 0})
     except Exception:
@@ -105,6 +124,9 @@ def modify_template(request_in):
     if report_template_link_status != "OK":
         return HttpResponse(report_template_link_status)
     
+    if template_id not in user_data['templates']:
+        return HttpResponse("User Trying to modify Unauthorized Template")
+    
     try:
         result = template_collection.replace_one({'template_id': template_id}, pay_load)
         print("Object Modified")
@@ -114,14 +136,17 @@ def modify_template(request_in):
         return HttpResponse("Template Modification failed")
 
     print(result)
-    return HttpResponse(status=200, content="Object modified")
-    
+    return JsonResponse(pay_load, safe=False)
 
 def delete_template(request_in):
     print("Get request")
     template_json = json.loads(request_in.body.decode('utf-8'))
     template_name = template_json.get("template_name")
     company_name = template_json.get("company_name")
+    primary_key = company_name + "-" + template_name
+
+    if primary_key not in user_data['templates']:
+        return HttpResponse("User Trying to Delete Unauthorized Template")
 
     try:
         template_details = template_collection.delete_one({"template_name": template_name, "company_name": company_name})
@@ -145,3 +170,34 @@ def check_report_template_dependency(company_name, template_name):
     else:
         #print(template_coupled, type(template_coupled), "NOt None")
         return "There's alredy a report using this template, unless versioning templates is implemented modification not allowed"
+
+def check_user_validity(request_in):
+    auth_header = request_in.META['HTTP_AUTHORIZATION']
+    encoded_credentials = auth_header.split(' ')[1]  # Removes "Basic " to isolate credentials
+    decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8").split(':')
+    username = decoded_credentials[0]
+    password = str(decoded_credentials[1])
+    
+    get_user_token(username)
+    
+    token_str = str(user_data["token"])
+    print(token_str, password)
+    if token_str != password:
+        return "none"
+    elif token_str == password and user_data["guest_mode"]=="enabled":
+        print("Guest Request to Template Server")
+        return "guest"
+    else:
+        return "user"
+
+def get_user_token(user_id):
+    
+    primary_key = user_id
+
+    try:
+        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1, 'templates': 1})
+    except Exception:
+        return HttpResponse("Not Able to fetch template object")
+    
+    global user_data 
+    user_data = user_details

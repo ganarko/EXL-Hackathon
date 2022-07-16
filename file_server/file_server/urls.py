@@ -18,9 +18,10 @@ from django.contrib import admin
 from django.urls import path
 from template_server import views as temp_srv_views
 from report_saver import views as report_saver_views
-
+from user_manager import views as user_manager_views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('temp_server/template/', temp_srv_views.template),
     path('report_server/report/', report_saver_views.report),
+    path('user_manager/user/', user_manager_views.user),
 ]
