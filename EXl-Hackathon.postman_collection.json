@@ -1,0 +1,2585 @@
+{
+	"info": {
+		"_postman_id": "36a118a7-1ef2-40a8-8239-5959a8255e07",
+		"name": "EXl-Hackathon",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Report_server",
+			"item": [
+				{
+					"name": "Report Saving Request",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\",\n    \"content\": \"Employees need a raise\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/report_server/report/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"report_server",
+								"report",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Report Saving Request - By Guest",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\",\n    \"content\": \"Employees need a raise\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 19:46:50 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "53"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Guest Users can only VIEW Reports | Only guest Access"
+						},
+						{
+							"name": "Report Saving Request - by User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\",\n    \"content\": \"Employees need a raise\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 20:23:39 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "320"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    \"azure-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf\",\n    \"oci-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n    \"oci-apse1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n    \"gcs_gsp-infra_employee-salary-spending-report.pdf\",\n    \"s3_gsp-infra_employee-salary-spending-report.pdf\"\n]"
+						},
+						{
+							"name": "Report Saving Request - Only In Minio",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\",\n    \"content\": \"Employees need a raise\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 10:01:24 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "143"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "[\n    \"oci-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf\",\n    \"azure-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\"\n]"
+						}
+					]
+				},
+				{
+					"name": "View Report Request - Download Links Disabled",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "da4d0466-ce35-4e2d-8e27-0278276b3c29",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"disabled\",\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/report_server/report/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"report_server",
+								"report",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "View Report Request - Download Links Disabled",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"disabled\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 20:26:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "653"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"report_id\": \"gsp-infra-employee-salary-spending-report.pdf\",\n    \"name\": \"employee-salary-spending-report.pdf\",\n    \"template_id\": \"gsp-infra-employees-reports\",\n    \"storage_object_ids\": [\n        \"azure-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"oci-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"oci-apse1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"gcs_gsp-infra_employee-salary-spending-report.pdf\",\n        \"s3_gsp-infra_employee-salary-spending-report.pdf\"\n    ],\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-euw1-standard\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"Decide by internal Processing\"\n}"
+						}
+					]
+				},
+				{
+					"name": "User - View Report Request - Download Links Enabled",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 2,\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/report_server/report/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"report_server",
+								"report",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Download Links Enabled User Req",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 2,\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 20:36:35 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "3026"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"report_id\": \"gsp-infra-employee-salary-spending-report.pdf\",\n    \"name\": \"employee-salary-spending-report.pdf\",\n    \"template_id\": \"gsp-infra-employees-reports\",\n    \"storage_object_ids\": [\n        \"azure-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"oci-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"oci-apse1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"gcs_gsp-infra_employee-salary-spending-report.pdf\",\n        \"s3_gsp-infra_employee-salary-spending-report.pdf\"\n    ],\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-euw1-standard\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"Decide by internal Processing\",\n    \"object_download_links\": [\n        \"http://localhost:9020/azure-usw1-archive-exl/azure-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=12345678%2F20220713%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220713T203635Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=bd7e0b1ea56b8e6b53d6906ac9ef7322eb4a8446c48c6b93e66275a3e9cbe7c0\",\n        \"http://localhost:9010/oci-euw1-standard-exl/oci-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=12345678%2F20220713%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220713T203635Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=b5a44f106dd0b862a01a519699228d46536642d088b8059a26d3b7fad8842e24\",\n        \"http://localhost:9010/oci-apse1-standard-exl/oci-apse1-standard-exl_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=12345678%2F20220713%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220713T203635Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=8496154a3d35b930715041bee0073c277c98fc73434c97b9eed11494758e6454\",\n        \"https://exl-file-storage.storage.googleapis.com/gcs_gsp-infra_employee-salary-spending-report.pdf?X-Goog-Algorithm=GOOG4-RSA-SHA256&X-Goog-Credential=exl-object-srotage-manager%40gsp-proj-a.iam.gserviceaccount.com%2F20220713%2Fauto%2Fstorage%2Fgoog4_request&X-Goog-Date=20220713T203635Z&X-Goog-Expires=7200&X-Goog-SignedHeaders=host&x-goog-signature=3d70486850c79302b472103af3a373a8beb3df31760d05790bb6c3d06d1f3c3ea82f2e0bd25f69d823dd684774e38f14e0153f8d8b96a9d8f27d7ee635c0afb4d6548db9b4d394210ed96d8c7649939628eee58fcecb1b6dc8034bc5a935b7ee30b1eefcad7969cf456aaee3e036573170af02ef16ad484e2bf6e202872ab54e146e92b65588698ab8a2975ef98e69a7c996ca80523034d5dfb4a9b45cd332037ed4a093a52a5accd00c104443836e7944788e70a9ac7fe7b83a8ef42938212e5d6d1ed8b7d221a10f48799b80c415cb26eb041116652eb28195e31960c7aa185fca42539741b3a52fe9c9559bacb7632ad5033dc53ffe9845c5bd52857458d4\",\n        \"https://aws-use2-standard-exl.s3.amazonaws.com/s3_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAV4YCL2NHILBX6HLS%2F20220713%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20220713T203635Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=b86c8c7b20386811d21c7b1d7af495e231eab1da6610bf9f5dbe72e748f0d502\"\n    ]\n}"
+						},
+						{
+							"name": "Guest Req exceeding Time",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 24,\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Thu, 14 Jul 2022 17:33:45 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Access Request exceeds time Limit | increase guest Time Limit"
+						}
+					]
+				},
+				{
+					"name": "Guest - View Report Request - Download Links Enabled",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "3e43d52e-ae7d-4294-bcca-f8704f8c0d8f",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-guest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 2,\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/report_server/report/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"report_server",
+								"report",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Guest - View Report Request - Download Links Enabled - Only Minio",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 2,\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 10:16:26 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "1223"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"report_id\": \"gsp-infra-employee-salary-spending-report.pdf\",\n    \"name\": \"employee-salary-spending-report.pdf\",\n    \"template_id\": \"gsp-infra-employees-reports\",\n    \"storage_object_ids\": [\n        \"oci-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf\",\n        \"azure-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf\"\n    ],\n    \"storage_points\": [\n        \"oci-usw1-archive\",\n        \"azure-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"Decide by internal Processing\",\n    \"object_download_links\": [\n        \"http://localhost:9010/oci-usw1-archive-exl/oci-usw1-archive-exl_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=12345678%2F20220715%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220715T101626Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=1d2134bd6ba4497df2fa2cba89a6f298786082e27a4e706cbc3a46b756ec7066\",\n        \"http://localhost:9020/azure-euw1-standard-exl/azure-euw1-standard-exl_gsp-infra_employee-salary-spending-report.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=12345678%2F20220715%2Fus-east-1%2Fs3%2Faws4_request&X-Amz-Date=20220715T101626Z&X-Amz-Expires=7200&X-Amz-SignedHeaders=host&X-Amz-Signature=dd940fc36158d99e393a0f3f0752641c79c7605e6d95e43ea392312784416e11\"\n    ]\n}"
+						},
+						{
+							"name": "Guest - View Report Request - Download Links Enabled - Exceeding Time Limit Access",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"download_links\": \"enabled\",\n    \"time_limit\": 26,\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 10:18:30 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "61"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Access Request exceeds time Limit | increase guest Time Limit"
+						}
+					]
+				},
+				{
+					"name": "Report Delete Request",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/report_server/report/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"report_server",
+								"report",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Report Delete Request - By Guest",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 19:48:06 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "53"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Guest Users can only VIEW Reports | Only guest Access"
+						},
+						{
+							"name": "Report Delete Request - By User",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"report_name\": \"employee-salary-spending-report.pdf\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/report_server/report/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"report_server",
+										"report",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 20:58:53 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "144"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "employee-salary-spending-report.pdf is Deleted successfully in: azure-usw1-archive-exl, oci-euw1-standard-exl, oci-apse1-standard-exl, gcs, s3, "
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Template_server",
+			"item": [
+				{
+					"name": "Create Template User",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"oci-usw1-archive\",\n        \"azure-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\", \"employee-salary-spending-report.pdf\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Template User - By User",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"oci-usw1-archive\",\n        \"azure-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\", \"employee-salary-spending-report.pdf\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:21:43 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "24"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "62d1239778a83cd852d4ee0a"
+						}
+					]
+				},
+				{
+					"name": "Create Template Guest",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "abb3fab6-db83-4f61-bd94-9c8934bf881f",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-guest",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"guest-employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"aws-usw1-archive\",\n        \"gcp-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\", \"employee-salary-spending-report.pdf\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Template Guest",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"guest-employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"aws-usw1-archive\",\n        \"gcp-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\", \"employee-salary-spending-report.pdf\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Wed, 13 Jul 2022 19:37:56 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "20"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Unauthorized request"
+						}
+					]
+				},
+				{
+					"name": "Create Template-2 By Admin",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-admin",
+									"type": "string"
+								},
+								{
+									"key": "password",
+									"value": "e93ecd53-e2cf-4a25-88b5-c4df6e70dded",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"spending-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"oci-usw1-archive\",\n        \"azure-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"annual-salary-spending-report.pdf\", \"logistics-spending-report.pdf\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Template-2 By User - When Template not permitted",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"spending-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"oci-usw1-archive\",\n        \"azure-euw1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"decided by internal computing\",\n    \"file_name_patterns\": [ \"annual-salary-spending-report.pdf\", \"logistics-spending-report.pdf\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:22:10 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "43"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "User Trying to Create Unauthorized Template"
+						}
+					]
+				},
+				{
+					"name": "Template Read Request",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Template Read Request - By User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:27:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "434"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"template_id\": \"gsp-infra-employees-reports\",\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"Decide by internal Processing\",\n    \"file_name_patterns\": [\n        \"employee-health-survey-report.pdf\",\n        \"employee-salary-spending-report.pdf\",\n        \"employee-feedback-report.pdf\"\n    ]\n}"
+						},
+						{
+							"name": "Unauthorized Template Read Request - by User",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"spending-reports\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:28:22 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "41"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "User Trying to view Unauthorized Template"
+						}
+					]
+				},
+				{
+					"name": "Template Modification Request",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"oci-apse1-standard_storage_class\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\",\n        \"employee-salary-spending-report.pdf\", \"employee-feedback-report.pdf\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Template Modification Request -  Wrong Password",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"oci-apse1-standard_storage_class\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\",\n        \"employee-salary-spending-report.pdf\", \"employee-feedback-report.pdf\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:23:27 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "69"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Unauthorized request | only Verified users can Access Template Server"
+						},
+						{
+							"name": "Template Modification Request - by User",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"oci-apse1-standard_storage_class\",\n    \"file_name_patterns\": [ \"employee-health-survey-report.pdf\",\n        \"employee-salary-spending-report.pdf\", \"employee-feedback-report.pdf\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 08:26:21 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "434"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"template_id\": \"gsp-infra-employees-reports\",\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\",\n    \"encrypt_key\": \"NA\",\n    \"compression_algo\": \"hoffman-abc\",\n    \"storage_points\": [\n        \"azure-usw1-archive\",\n        \"oci-apse1-standard\",\n        \"gcs\",\n        \"s3\"\n    ],\n    \"optimal_store_point\": \"Decide by internal Processing\",\n    \"file_name_patterns\": [\n        \"employee-health-survey-report.pdf\",\n        \"employee-salary-spending-report.pdf\",\n        \"employee-feedback-report.pdf\"\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Template delete request",
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "5b6bd72f-81a1-468f-a2f1-1bc7114ac1f3",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "gsp-infra-hr-user",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "127.0.0.1:8000/temp_server/template/",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"temp_server",
+								"template",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Template delete request - Deleting Template",
+							"originalRequest": {
+								"method": "DELETE",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"template_name\": \"employees-reports\",\n    \"company_name\": \"gsp-infra\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "127.0.0.1:8000/temp_server/template/",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"temp_server",
+										"template",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "html",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Sun, 03 Jul 2022 17:45:57 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "text/html; charset=utf-8"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "14"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "Object Deleted"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "User_Management",
+			"item": [
+				{
+					"name": "Create Client User",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"hr-user\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Client User -Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_name\": \"hr-user\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:25:25 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "184"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-user\",\n    \"user_token\": \"da4d0466-ce35-4e2d-8e27-0278276b3c29\",\n    \"guest_mode\": \"disabled\",\n    \"allowed_templates\": [\n        \"gsp-infra-employees-reports\"\n    ],\n    \"end_time\": \"NA\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Client User -2",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"hr-admin\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\", \"gsp-infra-spending-reports\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Client User -2",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_name\": \"hr-admin\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\", \"gsp-infra-spending-reports\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 10:29:39 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "215"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-admin\",\n    \"user_token\": \"e93ecd53-e2cf-4a25-88b5-c4df6e70dded\",\n    \"guest_mode\": \"disabled\",\n    \"allowed_templates\": [\n        \"gsp-infra-employees-reports\",\n        \"gsp-infra-spending-reports\"\n    ],\n    \"end_time\": \"NA\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Guest User",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_name\": \"hr-guest\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"enabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\"]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Create Guest User - Example",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_name\": \"hr-guest\",\n    \"company_name\": \"gsp-infra\",\n    \"guest_mode\": \"enabled\",\n    \"stay_period\": 1,\n    \"templates\": [\"gsp-infra-employees-reports\"]\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:21:23 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "201"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-guest\",\n    \"user_token\": \"3e43d52e-ae7d-4294-bcca-f8704f8c0d8f\",\n    \"guest_mode\": \"enabled\",\n    \"allowed_templates\": [\n        \"gsp-infra-employees-reports\"\n    ],\n    \"end_time\": \"16/07/2022 00:00:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Modify Guest - Add More Time",
+					"request": {
+						"auth": {
+							"type": "noauth"
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"gsp-infra-hr-guest\",\n    \"guest_mode\": \"enabled\",\n    \"stay_period\": 2,\n    \"templates\": [\"gsp-infra-employees-reports\"],\n    \"user_name\": \"hr-guest\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Modify Guest User Time Limit",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_id\": \"gsp-infra-hr-guest\",\n    \"guest_mode\": \"enabled\",\n    \"stay_period\": 2,\n    \"templates\": [\"gsp-infra-employees-reports\"],\n    \"user_name\": \"hr-guest\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:22:20 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "250"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-guest\",\n    \"user_name\": \"hr-guest\",\n    \"templates\": [\n        \"gsp-infra-employees-reports\"\n    ],\n    \"token\": \"3e43d52e-ae7d-4294-bcca-f8704f8c0d8f\",\n    \"guest_mode\": \"enabled\",\n    \"updated_on\": \"15/07/2022 07:22:20\",\n    \"end_time\": \"17/07/2022 00:00:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Modify User - Add more Templates",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"gsp-infra-hr-user\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 2,\n    \"templates\": [\"gsp-infra-employees-reports\", \"gsp-infra-spending-reports\"],\n    \"user_name\": \"hr-user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Modify User - Add more Templates",
+							"originalRequest": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_id\": \"gsp-infra-hr-user\",\n    \"guest_mode\": \"disabled\",\n    \"stay_period\": 2,\n    \"templates\": [\"gsp-infra-employees-reports\", \"gsp-infra-spending-reports\"],\n    \"user_name\": \"hr-user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:30:58 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "262"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-user\",\n    \"user_name\": \"hr-user\",\n    \"templates\": [\n        \"gsp-infra-employees-reports\",\n        \"gsp-infra-spending-reports\"\n    ],\n    \"token\": \"da4d0466-ce35-4e2d-8e27-0278276b3c29\",\n    \"guest_mode\": \"disabled\",\n    \"updated_on\": \"15/07/2022 07:30:58\",\n    \"end_time\": \"NA\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Fetch User Details",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"gsp-infra-hr-user\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Fetch User Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_id\": \"gsp-infra-hr-user\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:31:59 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "262"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-user\",\n    \"user_name\": \"hr-user\",\n    \"templates\": [\n        \"gsp-infra-employees-reports\",\n        \"gsp-infra-spending-reports\"\n    ],\n    \"token\": \"da4d0466-ce35-4e2d-8e27-0278276b3c29\",\n    \"guest_mode\": \"disabled\",\n    \"updated_on\": \"15/07/2022 07:30:58\",\n    \"end_time\": \"NA\"\n}"
+						},
+						{
+							"name": "Fetch Guest User Details",
+							"originalRequest": {
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user_id\": \"gsp-infra-hr-guest\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://127.0.0.1:8000/user_manager/user/",
+									"protocol": "http",
+									"host": [
+										"127",
+										"0",
+										"0",
+										"1"
+									],
+									"port": "8000",
+									"path": [
+										"user_manager",
+										"user",
+										""
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": "json",
+							"header": [
+								{
+									"key": "Date",
+									"value": "Fri, 15 Jul 2022 07:32:14 GMT"
+								},
+								{
+									"key": "Server",
+									"value": "WSGIServer/0.2 CPython/3.9.5"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "X-Frame-Options",
+									"value": "DENY"
+								},
+								{
+									"key": "Content-Length",
+									"value": "250"
+								},
+								{
+									"key": "X-Content-Type-Options",
+									"value": "nosniff"
+								},
+								{
+									"key": "Referrer-Policy",
+									"value": "same-origin"
+								},
+								{
+									"key": "Cross-Origin-Opener-Policy",
+									"value": "same-origin"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"user_id\": \"gsp-infra-hr-guest\",\n    \"user_name\": \"hr-guest\",\n    \"templates\": [\n        \"gsp-infra-employees-reports\"\n    ],\n    \"token\": \"3e43d52e-ae7d-4294-bcca-f8704f8c0d8f\",\n    \"guest_mode\": \"enabled\",\n    \"updated_on\": \"15/07/2022 07:22:20\",\n    \"end_time\": \"17/07/2022 00:00:00\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Delete User",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"user_id\": \"gsp-infra-hr-admin\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://127.0.0.1:8000/user_manager/user/",
+							"protocol": "http",
+							"host": [
+								"127",
+								"0",
+								"0",
+								"1"
+							],
+							"port": "8000",
+							"path": [
+								"user_manager",
+								"user",
+								""
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}
