@@ -43,6 +43,7 @@ users_collection = db['users']
 GCS_BUCKET = "exl-file-storage"
 GCS_CREDENTIALS_FILE = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
 AWS_BUCKET = "aws-use2-standard-exl"
+EXECUTE_TO_CLOUD = False
 
 #Object stores mimicking gcs and s3
 management_id = "exl"
@@ -63,24 +64,26 @@ client_oci = Minio(
 @csrf_exempt
 def report(request):
     
-    user_status = check_user_validity(request)
+    report_json = json.loads(request.body.decode('utf-8'))
+
+    user_status = check_user_validity(request, report_json)
     
+    if user_status != "user" and user_status != "none" and user_status != "guest":
+        return HttpResponse(user_status)
+
     if user_status == "none":
         return HttpResponse("Unauthorized request | no user found")
     
-    report_json = json.loads(request.body.decode('utf-8'))
     company_name = report_json.get("company_name")
     report_name = report_json.get("report_name")
 
     #Allowed guests and users
     if request.method == "GET" :
         download_links = report_json.get("download_links")
-        report = get_report_data(report_name, company_name, download_links, report_json)
-        return JsonResponse(report, safe=False)
+        return get_report_data(report_name, company_name, download_links, report_json)
     #Allowed users Only
     elif request.method  == "DELETE" and user_status=="user":
-        removed_report_status = delete_report(report_name, company_name, report_json)
-        return HttpResponse(removed_report_status)
+        return delete_report(report_name, company_name, report_json)
     #Allowed users Only
     elif request.method  == "PUT" and user_status=="user":
         return HttpResponse("Report Storage pattern modification is not allowed as of now")
@@ -117,7 +120,8 @@ def report(request):
 
     return JsonResponse(storage_bucket_object_ids, safe=False)
 
-def check_user_validity(request_in):
+def check_user_validity(request_in, report_json):
+
     try: 
         auth_header = request_in.META['HTTP_AUTHORIZATION']
     except Exception as e:
@@ -128,13 +132,38 @@ def check_user_validity(request_in):
     decoded_credentials = base64.b64decode(encoded_credentials).decode("utf-8").split(':')
     username = decoded_credentials[0]
     password = decoded_credentials[1]
-    user_data = get_user_token(username)
+    get_user_token(username)
+    
     
     if str(user_data["token"]) != password:
         return "none"
     elif str(user_data["token"]) == password and user_data["guest_mode"]=="enabled":
+
         #verify time for the guest
+        end_time_limit = report_json.get("time_limit")
+        end_time = user_data['end_time']
+        current_check_time = datetime.datetime.now() + timedelta(hours=end_time_limit)
+        current_check_time = current_check_time.strftime("%d/%m/%Y %H:%M:%S")
+        if end_time < current_check_time:
+            print(end_time_limit, current_check_time, "Access Request exceeds time Limit | increase guest Time Limit")
+            return "Access Request exceeds time Limit | increase guest Time Limit"
+        
         #verify template - report relationship for the guest
+        company_name = report_json.get("company_name")
+        report_name = report_json.get("report_name")
+        try:
+            global report_details
+            report_details = report_collection.find_one({"company_name": company_name ,"name": report_name}, {"_id": 0, "company_name": 0 } )
+        except Exception as e:
+            print(e)
+            return "Not able to fetch requested Report data"
+        if report_details == None:
+            return "Not able to fetch requested Report data"
+            
+        if report_details['template_id'] not in user_data['templates']:
+            print("Guest user requesting Report | Forbidden ")
+            return "Guest user requesting Report | Forbidden Request"
+
         return "guest"
     else:
         return "user"
@@ -143,13 +172,15 @@ def get_user_token(user_id):
     primary_key = user_id
 
     try:
-        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1, "end_time":1})
+        user_details = users_collection.find_one({"user_id": primary_key}, {"token": 1, "guest_mode": 1, "end_time":1, "templates":1})
     except Exception:
         return HttpResponse("Not Able to fetch template object")
     
-    return user_details
+    global user_data 
+    user_data = user_details
 
 def get_object_download_link(report_details, time_limit):
+    
     object_download_links = []
     if report_details is None:
         return None
@@ -169,10 +200,10 @@ def get_object_download_link(report_details, time_limit):
         elif cloud_provider == "azure":
             cloud_provider_client = client_azure
             object_link = get_object(cloud_provider_client, bucket_name, object_id, time_limit)
-        elif bucket_name == "gcs":
+        elif bucket_name == "gcs" and EXECUTE_TO_CLOUD:
           expiration = 60*60*time_limit
           object_link = generate_signed_url_gcp(GCS_CREDENTIALS_FILE, GCS_BUCKET, object_id, expiration)
-        elif bucket_name == "s3":
+        elif bucket_name == "s3" and EXECUTE_TO_CLOUD:
           expiration = 60*60*time_limit
           object_link = get_presigned_url_aws(AWS_BUCKET, object_id, expiration)
         else:
@@ -195,16 +226,23 @@ def get_report_data(filename, company_name, download_links, report_json):
     print(type(report_details))
     
     if report_details is None:
-        return None
+        return HttpResponse("Not able to fetch Report")
     if download_links == "enabled":
         time_limit = report_json.get("time_limit")
+        if report_details["template_id"] not in user_data['templates']:
+            return HttpResponse("User Trying to View Report | Access denied")
+        
         report_details["object_download_links"] = get_object_download_link(report_details, time_limit)
     
     print(report_details["name"])
-    return report_details
+    return JsonResponse(report_details, safe=False)
 
 def delete_report(reportname,company_name, report_json_data):
-    report_details = get_report_data(reportname, company_name, download_links="disabled", report_json=report_json_data)
+    try:
+        report_details = report_collection.find_one({"company_name": company_name ,"name": reportname}, {"_id": 0, "company_name": 0 } )
+    except Exception as e:
+        print(e)
+        return HttpResponse("Not able to fetch Report")
     if report_details is None:
         return HttpResponse("No such Report Exists")
     storage_object_ids = report_details['storage_object_ids']
@@ -224,10 +262,10 @@ def delete_report(reportname,company_name, report_json_data):
             cloud_provider_client = client_azure
             delete_object(cloud_provider_client, bucket_name, object_id)
             delete_report_status = delete_report_status + bucket_name + ", "
-        elif bucket_name == "gcs":
+        elif bucket_name == "gcs" and EXECUTE_TO_CLOUD:
             delete_blob_gcp(GCS_BUCKET, object_id)
             delete_report_status = delete_report_status + bucket_name + ", "
-        elif bucket_name == "s3":
+        elif bucket_name == "s3" and EXECUTE_TO_CLOUD:
             delete_object_aws(AWS_BUCKET, object_id)
             delete_report_status = delete_report_status + bucket_name + ", "
         else:
@@ -244,7 +282,7 @@ def delete_report(reportname,company_name, report_json_data):
         print(e)
         return "Not Able to delete report Object in MongoDB"
     #Deleted  Report
-    return delete_report_status
+    return HttpResponse(f"{delete_report_status}")
 
 def generate_temp_report(report_name, content):
     pdf = FPDF()
@@ -332,7 +370,7 @@ def save_report_cloud(template_data, report_name, company):
        
        if object_id is None:
         #Schedule Reupload of the Object/Handle Exception
-        print(f"For this {storage_point}, object upload Failed")
+        print(f"For {storage_point}, object upload Failed")
        else:
         object_ids.append(object_id)
     
@@ -359,10 +397,10 @@ def upload_file_cloud(storage_id_string, reportname, company):
         saved_object_id = put_object(client_oci, bucket_name, file_address, company, reportname)
     elif(cloud_service_provider == "azure"):
         saved_object_id = put_object(client_azure,bucket_name, file_address, company, reportname)
-    elif(cloud_service_provider == "gcs"):
+    elif(cloud_service_provider == "gcs" and EXECUTE_TO_CLOUD):
         object_id =  cloud_service_provider + "_" + company + "_" + reportname
         saved_object_id =  upload_blob_gcp(GCS_BUCKET,file_address,object_id )
-    elif(cloud_service_provider == "s3"):
+    elif(cloud_service_provider == "s3" and EXECUTE_TO_CLOUD):
         object_id =  cloud_service_provider + "_" + company + "_" + reportname
         saved_object_id = store_object_aws(AWS_BUCKET, file_address, object_id)
     else:
@@ -371,21 +409,24 @@ def upload_file_cloud(storage_id_string, reportname, company):
     return saved_object_id
 
 def put_object(client, bucket, report_address, company, reportname):
-    found = client.bucket_exists(bucket)
+    
     object_id =  bucket + "_" + company + "_" + reportname
-    if not found:
-        print("Bucket Does not Exist, creating Bucket")
-        client.make_bucket(bucket)
-    else:
-        print("Bucket already exists")
+    
     try:
+        found = client.bucket_exists(bucket)
+        if not found:
+            print("Bucket Does not Exist, creating Bucket")
+            client.make_bucket(bucket)
+        else:
+            print("Bucket already exists")
+        
         result = client.fput_object(
             bucket, object_id, report_address,
             )
         
         print(result)
         return object_id
-    except S3Error as e:
+    except Exception as e:
         print(e)
         return None
 
