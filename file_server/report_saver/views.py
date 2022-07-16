@@ -15,7 +15,7 @@ from pymongo import MongoClient
 
 #For MinIo  to Demonstrate multi cloud - Multi Region Multi Storage-Class Functionality
 from minio import Minio
-from minio.error import S3Error
+
 
 #For AWS S3-Ops
 import boto3

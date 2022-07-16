@@ -1,6 +1,5 @@
 from datetime import date, timedelta, datetime
 import json
-from turtle import update
 
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import render
