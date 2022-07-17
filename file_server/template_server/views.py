@@ -9,7 +9,7 @@ from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
 # Create your views here.
-mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
+mongo_connect_string = "mongodb://gsp:rootpass@172.20.0.20:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
 template_collection = db['templates']

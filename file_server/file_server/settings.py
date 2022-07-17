@@ -82,7 +82,7 @@ DATABASES = {
         'ENGINE': 'djongo',
         'NAME': 'exl',
         'CLIENT': {
-           'host': 'localhost',
+           'host': '172.20.0.20',
            'username': 'gsp',
            'password': 'rootpass',
         }

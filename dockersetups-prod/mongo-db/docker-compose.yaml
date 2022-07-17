@@ -3,9 +3,12 @@ services:
   mongo:
     image: mongo:latest
     container_name: mongoDB
+    hostname: mongo
     ports:
       - "27017:27017"
-    
+    networks:
+      file_server_net:
+        ipv4_address: 172.20.0.20
     volumes:
       - ./data:/data/db
       - ./mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
@@ -17,6 +20,9 @@ services:
   mongo-express:
     image: mongo-express:latest
     container_name: mongodb-admin
+    networks:
+      file_server_net:
+        ipv4_address: 172.20.0.21
     ports:
       - "8081:8081"
     environment:
@@ -29,3 +35,9 @@ services:
     depends_on:
       - mongo
     restart: always
+
+networks:
+  file_server_net:
+    driver: bridge
+    external: true
+      

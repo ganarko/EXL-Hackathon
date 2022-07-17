@@ -32,7 +32,7 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 #MongoDB Config
-mongo_connect_string = "mongodb://gsp:rootpass@localhost:27017/"
+mongo_connect_string = "mongodb://gsp:rootpass@172.20.0.20:27017/"
 client = MongoClient(mongo_connect_string)
 db = client['exl']
 template_collection = db['templates']
@@ -48,13 +48,13 @@ EXECUTE_TO_CLOUD = False
 #Object stores mimicking gcs and s3
 management_id = "exl"
 client_azure = Minio(
-        "localhost:9020",
+        "172.20.0.11:9000",
         access_key="12345678",
         secret_key="password",
         secure=False,
 )
 client_oci = Minio(
-        "localhost:9010",
+        "172.20.0.10:9000",
         access_key="12345678",
         secret_key="password",
         secure=False,
